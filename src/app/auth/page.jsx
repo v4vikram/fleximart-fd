@@ -1,13 +1,13 @@
-"use client"
-import React, { useState, useEffect } from 'react';
-import { 
-  ArrowLeft, 
-  Eye, 
-  EyeOff, 
-  Mail, 
-  Lock, 
-  User, 
-  Phone, 
+"use client";
+import React, { useState, useEffect } from "react";
+import {
+  ArrowLeft,
+  Eye,
+  EyeOff,
+  Mail,
+  Lock,
+  User,
+  Phone,
   AlertCircle,
   Apple,
   Smartphone,
@@ -18,11 +18,12 @@ import {
   Gift,
   Zap,
   Users,
-  CheckCircle2
-} from 'lucide-react';
+  CheckCircle2,
+} from "lucide-react";
+import axios from "axios";
 
 const AuthPage = () => {
-  const [currentView, setCurrentView] = useState('welcome');
+  const [currentView, setCurrentView] = useState("welcome");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -31,36 +32,36 @@ const AuthPage = () => {
   const [canResendOtp, setCanResendOtp] = useState(false);
 
   const [loginData, setLoginData] = useState({
-    email: '',
-    password: '',
-    rememberMe: false
+    email: "",
+    password: "",
+    rememberMe: false,
   });
 
   const [registerData, setRegisterData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
     agreeToTerms: false,
-    subscribeNewsletter: true
+    subscribeNewsletter: true,
   });
 
   const [forgotData, setForgotData] = useState({
-    email: ''
+    email: "",
   });
 
   const [otpData, setOtpData] = useState({
-    otp: ['', '', '', '', '', '']
+    otp: ["", "", "", "", "", ""],
   });
 
   // OTP Timer Effect
   useEffect(() => {
     let interval = null;
-    if (currentView === 'otp' && otpTimer > 0) {
+    if (currentView === "otp" && otpTimer > 0) {
       interval = setInterval(() => {
-        setOtpTimer(timer => timer - 1);
+        setOtpTimer((timer) => timer - 1);
       }, 1000);
     } else if (otpTimer === 0) {
       setCanResendOtp(true);
@@ -80,41 +81,48 @@ const AuthPage = () => {
   const validateForm = (data, type) => {
     const newErrors = {};
 
-    if (type === 'login') {
-      if (!data.email) newErrors.email = 'Email is required';
-      else if (!validateEmail(data.email)) newErrors.email = 'Invalid email format';
-      
-      if (!data.password) newErrors.password = 'Password is required';
+    if (type === "login") {
+      if (!data.email) newErrors.email = "Email is required";
+      else if (!validateEmail(data.email))
+        newErrors.email = "Invalid email format";
+
+      if (!data.password) newErrors.password = "Password is required";
     }
 
-    if (type === 'register') {
-      if (!data.firstName) newErrors.firstName = 'First name is required';
-      if (!data.lastName) newErrors.lastName = 'Last name is required';
-      
-      if (!data.email) newErrors.email = 'Email is required';
-      else if (!validateEmail(data.email)) newErrors.email = 'Invalid email format';
-      
-      if (!data.phone) newErrors.phone = 'Phone number is required';
-      
-      if (!data.password) newErrors.password = 'Password is required';
-      else if (!validatePassword(data.password)) newErrors.password = 'Password must be at least 8 characters';
-      
-      if (!data.confirmPassword) newErrors.confirmPassword = 'Please confirm your password';
-      else if (data.password !== data.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
-      
-      if (!data.agreeToTerms) newErrors.agreeToTerms = 'You must agree to the terms';
+    if (type === "register") {
+      if (!data.firstName) newErrors.firstName = "First name is required";
+      if (!data.lastName) newErrors.lastName = "Last name is required";
+
+      if (!data.email) newErrors.email = "Email is required";
+      else if (!validateEmail(data.email))
+        newErrors.email = "Invalid email format";
+
+      if (!data.phone) newErrors.phone = "Phone number is required";
+
+      if (!data.password) newErrors.password = "Password is required";
+      else if (!validatePassword(data.password))
+        newErrors.password = "Password must be at least 8 characters";
+
+      if (!data.confirmPassword)
+        newErrors.confirmPassword = "Please confirm your password";
+      else if (data.password !== data.confirmPassword)
+        newErrors.confirmPassword = "Passwords do not match";
+
+      if (!data.agreeToTerms)
+        newErrors.agreeToTerms = "You must agree to the terms";
     }
 
-    if (type === 'forgot') {
-      if (!data.email) newErrors.email = 'Email is required';
-      else if (!validateEmail(data.email)) newErrors.email = 'Invalid email format';
+    if (type === "forgot") {
+      if (!data.email) newErrors.email = "Email is required";
+      else if (!validateEmail(data.email))
+        newErrors.email = "Invalid email format";
     }
 
     return newErrors;
   };
 
   const handleLogin = async () => {
-    const formErrors = validateForm(loginData, 'login');
+    const formErrors = validateForm(loginData, "login");
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
       return;
@@ -124,14 +132,16 @@ const AuthPage = () => {
     setErrors({});
 
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
+    const loginRes = await axios.post(`http://localhost:8080/api/auth/login`);
+    console.log("loginRes", loginRes)
+    // await new Promise((resolve) => setTimeout(resolve, 2000));
+
     setLoading(false);
-    setCurrentView('success');
+    setCurrentView("success");
   };
 
   const handleRegister = async () => {
-    const formErrors = validateForm(registerData, 'register');
+    const formErrors = validateForm(registerData, "register");
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
       return;
@@ -141,14 +151,14 @@ const AuthPage = () => {
     setErrors({});
 
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
     setLoading(false);
-    setCurrentView('otp');
+    setCurrentView("otp");
   };
 
   const handleForgotPassword = async () => {
-    const formErrors = validateForm(forgotData, 'forgot');
+    const formErrors = validateForm(forgotData, "forgot");
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
       return;
@@ -158,18 +168,18 @@ const AuthPage = () => {
     setErrors({});
 
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
     setLoading(false);
-    setCurrentView('otp');
+    setCurrentView("otp");
     setOtpTimer(30);
     setCanResendOtp(false);
   };
 
   const handleOtpVerification = async () => {
-    const otpValue = otpData.otp.join('');
+    const otpValue = otpData.otp.join("");
     if (otpValue.length !== 6) {
-      setErrors({ otp: 'Please enter complete OTP' });
+      setErrors({ otp: "Please enter complete OTP" });
       return;
     }
 
@@ -177,10 +187,10 @@ const AuthPage = () => {
     setErrors({});
 
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
     setLoading(false);
-    setCurrentView('success');
+    setCurrentView("success");
   };
 
   const handleOtpChange = (index, value) => {
@@ -201,20 +211,20 @@ const AuthPage = () => {
     console.log(`Login with ${provider}`);
     // Simulate social login
     setTimeout(() => {
-      setCurrentView('success');
+      setCurrentView("success");
     }, 1000);
   };
 
   const resendOtp = () => {
     setOtpTimer(30);
     setCanResendOtp(false);
-    setOtpData({ otp: ['', '', '', '', '', ''] });
+    setOtpData({ otp: ["", "", "", "", "", ""] });
     // Simulate resend API call
-    console.log('OTP resent');
+    console.log("OTP resent");
   };
 
   // Welcome Screen
-  if (currentView === 'welcome') {
+  if (currentView === "welcome") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-600 via-purple-700 to-pink-600">
         {/* Status Bar */}
@@ -235,7 +245,9 @@ const AuthPage = () => {
                 <ShoppingBag className="w-12 h-12 text-white" />
               </div>
               <h1 className="text-4xl font-bold mb-4">ShopHub</h1>
-              <p className="text-xl text-purple-100 mb-8">Your favorite shopping destination</p>
+              <p className="text-xl text-purple-100 mb-8">
+                Your favorite shopping destination
+              </p>
             </div>
 
             {/* Features */}
@@ -270,20 +282,20 @@ const AuthPage = () => {
           {/* Action Buttons */}
           <div className="space-y-4">
             <button
-              onClick={() => setCurrentView('register')}
+              onClick={() => setCurrentView("register")}
               className="w-full bg-white text-purple-600 py-4 rounded-2xl font-bold text-lg hover:bg-gray-50 transition-colors"
             >
               Get Started
             </button>
             <button
-              onClick={() => setCurrentView('login')}
+              onClick={() => setCurrentView("login")}
               className="w-full border-2 border-white text-white py-4 rounded-2xl font-bold text-lg hover:bg-white hover:bg-opacity-10 transition-colors"
             >
               Sign In
             </button>
             <p className="text-center text-purple-200 text-sm">
-              By continuing, you agree to our{' '}
-              <span className="underline">Terms of Service</span> and{' '}
+              By continuing, you agree to our{" "}
+              <span className="underline">Terms of Service</span> and{" "}
               <span className="underline">Privacy Policy</span>
             </p>
           </div>
@@ -293,7 +305,7 @@ const AuthPage = () => {
   }
 
   // Success Screen
-  if (currentView === 'success') {
+  if (currentView === "success") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50">
         {/* Status Bar */}
@@ -314,8 +326,10 @@ const AuthPage = () => {
             </div>
             <h1 className="text-3xl font-bold mb-4">Welcome to ShopHub!</h1>
             <p className="text-gray-600 mb-2">Your account is ready</p>
-            <p className="text-gray-600 mb-8">Start exploring amazing products and deals</p>
-            
+            <p className="text-gray-600 mb-8">
+              Start exploring amazing products and deals
+            </p>
+
             <div className="bg-white rounded-2xl p-6 mb-8 shadow-sm">
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-center">
@@ -331,14 +345,14 @@ const AuthPage = () => {
               </div>
             </div>
 
-            <button 
-              onClick={() => setCurrentView('welcome')}
+            <button
+              onClick={() => setCurrentView("welcome")}
               className="w-full bg-purple-600 text-white py-4 rounded-2xl font-semibold hover:bg-purple-700 transition-colors mb-4"
             >
               Start Shopping
             </button>
-            <button 
-              onClick={() => setCurrentView('welcome')}
+            <button
+              onClick={() => setCurrentView("welcome")}
               className="w-full bg-white text-purple-600 py-4 rounded-2xl font-semibold border border-purple-200 hover:bg-purple-50 transition-colors"
             >
               Complete Profile
@@ -364,21 +378,21 @@ const AuthPage = () => {
       {/* Header */}
       <header className="bg-white px-6 py-4 shadow-sm">
         <div className="flex items-center justify-between">
-          <button onClick={() => setCurrentView('welcome')}>
+          <button onClick={() => setCurrentView("welcome")}>
             <ArrowLeft className="w-6 h-6" />
           </button>
           <div className="text-center">
             <h1 className="text-xl font-bold">
-              {currentView === 'login' && 'Welcome Back'}
-              {currentView === 'register' && 'Create Account'}
-              {currentView === 'forgot' && 'Reset Password'}
-              {currentView === 'otp' && 'Verification'}
+              {currentView === "login" && "Welcome Back"}
+              {currentView === "register" && "Create Account"}
+              {currentView === "forgot" && "Reset Password"}
+              {currentView === "otp" && "Verification"}
             </h1>
             <p className="text-sm text-gray-500">
-              {currentView === 'login' && 'Sign in to your account'}
-              {currentView === 'register' && 'Join our community'}
-              {currentView === 'forgot' && 'Enter your email address'}
-              {currentView === 'otp' && 'Enter the code sent to your email'}
+              {currentView === "login" && "Sign in to your account"}
+              {currentView === "register" && "Join our community"}
+              {currentView === "forgot" && "Enter your email address"}
+              {currentView === "otp" && "Enter the code sent to your email"}
             </p>
           </div>
           <div className="w-6"></div>
@@ -387,19 +401,19 @@ const AuthPage = () => {
 
       <div className="p-6">
         {/* Login Form */}
-        {currentView === 'login' && (
+        {currentView === "login" && (
           <div className="space-y-6">
             {/* Social Login */}
             <div className="space-y-3">
               <button
-                onClick={() => handleSocialLogin('apple')}
+                onClick={() => handleSocialLogin("apple")}
                 className="w-full flex items-center justify-center gap-3 bg-black text-white py-4 rounded-2xl font-medium hover:bg-gray-800 transition-colors"
               >
                 <Apple className="w-5 h-5" />
                 Continue with Apple
               </button>
               <button
-                onClick={() => handleSocialLogin('google')}
+                onClick={() => handleSocialLogin("google")}
                 className="w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-200 text-gray-700 py-4 rounded-2xl font-medium hover:border-gray-300 transition-colors"
               >
                 <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
@@ -417,15 +431,19 @@ const AuthPage = () => {
 
             {/* Email Input */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Email
+              </label>
               <div className="relative">
                 <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   type="email"
                   value={loginData.email}
-                  onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
+                  onChange={(e) =>
+                    setLoginData({ ...loginData, email: e.target.value })
+                  }
                   className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors ${
-                    errors.email ? 'border-red-500' : 'border-gray-200'
+                    errors.email ? "border-red-500" : "border-gray-200"
                   }`}
                   placeholder="Enter your email"
                 />
@@ -440,15 +458,19 @@ const AuthPage = () => {
 
             {/* Password Input */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Password
+              </label>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   value={loginData.password}
-                  onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                  onChange={(e) =>
+                    setLoginData({ ...loginData, password: e.target.value })
+                  }
                   className={`w-full pl-12 pr-12 py-4 border-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors ${
-                    errors.password ? 'border-red-500' : 'border-gray-200'
+                    errors.password ? "border-red-500" : "border-gray-200"
                   }`}
                   placeholder="Enter your password"
                 />
@@ -457,7 +479,11 @@ const AuthPage = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
                 </button>
               </div>
               {errors.password && (
@@ -474,13 +500,15 @@ const AuthPage = () => {
                 <input
                   type="checkbox"
                   checked={loginData.rememberMe}
-                  onChange={(e) => setLoginData({ ...loginData, rememberMe: e.target.checked })}
+                  onChange={(e) =>
+                    setLoginData({ ...loginData, rememberMe: e.target.checked })
+                  }
                   className="w-5 h-5 text-purple-600 rounded border-gray-300 focus:ring-purple-500"
                 />
                 <span className="text-sm text-gray-600">Remember me</span>
               </label>
               <button
-                onClick={() => setCurrentView('forgot')}
+                onClick={() => setCurrentView("forgot")}
                 className="text-sm text-purple-600 font-medium hover:underline"
               >
                 Forgot password?
@@ -499,15 +527,15 @@ const AuthPage = () => {
                   Signing in...
                 </>
               ) : (
-                'Sign In'
+                "Sign In"
               )}
             </button>
 
             {/* Sign Up Link */}
             <p className="text-center text-gray-600">
-              Don't have an account?{' '}
+              Don't have an account?{" "}
               <button
-                onClick={() => setCurrentView('register')}
+                onClick={() => setCurrentView("register")}
                 className="text-purple-600 font-medium hover:underline"
               >
                 Sign up
@@ -517,19 +545,19 @@ const AuthPage = () => {
         )}
 
         {/* Register Form */}
-        {currentView === 'register' && (
+        {currentView === "register" && (
           <div className="space-y-6">
             {/* Social Login */}
             <div className="space-y-3">
               <button
-                onClick={() => handleSocialLogin('apple')}
+                onClick={() => handleSocialLogin("apple")}
                 className="w-full flex items-center justify-center gap-3 bg-black text-white py-4 rounded-2xl font-medium hover:bg-gray-800 transition-colors"
               >
                 <Apple className="w-5 h-5" />
                 Continue with Apple
               </button>
               <button
-                onClick={() => handleSocialLogin('google')}
+                onClick={() => handleSocialLogin("google")}
                 className="w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-200 text-gray-700 py-4 rounded-2xl font-medium hover:border-gray-300 transition-colors"
               >
                 <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
@@ -548,31 +576,47 @@ const AuthPage = () => {
             {/* Name Inputs */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  First Name
+                </label>
                 <div className="relative">
                   <User className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
                     type="text"
                     value={registerData.firstName}
-                    onChange={(e) => setRegisterData({ ...registerData, firstName: e.target.value })}
+                    onChange={(e) =>
+                      setRegisterData({
+                        ...registerData,
+                        firstName: e.target.value,
+                      })
+                    }
                     className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors ${
-                      errors.firstName ? 'border-red-500' : 'border-gray-200'
+                      errors.firstName ? "border-red-500" : "border-gray-200"
                     }`}
                     placeholder="First name"
                   />
                 </div>
                 {errors.firstName && (
-                  <p className="mt-1 text-xs text-red-500">{errors.firstName}</p>
+                  <p className="mt-1 text-xs text-red-500">
+                    {errors.firstName}
+                  </p>
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Last Name
+                </label>
                 <input
                   type="text"
                   value={registerData.lastName}
-                  onChange={(e) => setRegisterData({ ...registerData, lastName: e.target.value })}
+                  onChange={(e) =>
+                    setRegisterData({
+                      ...registerData,
+                      lastName: e.target.value,
+                    })
+                  }
                   className={`w-full px-4 py-4 border-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors ${
-                    errors.lastName ? 'border-red-500' : 'border-gray-200'
+                    errors.lastName ? "border-red-500" : "border-gray-200"
                   }`}
                   placeholder="Last name"
                 />
@@ -584,15 +628,19 @@ const AuthPage = () => {
 
             {/* Email Input */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Email
+              </label>
               <div className="relative">
                 <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   type="email"
                   value={registerData.email}
-                  onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
+                  onChange={(e) =>
+                    setRegisterData({ ...registerData, email: e.target.value })
+                  }
                   className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors ${
-                    errors.email ? 'border-red-500' : 'border-gray-200'
+                    errors.email ? "border-red-500" : "border-gray-200"
                   }`}
                   placeholder="Enter your email"
                 />
@@ -607,15 +655,19 @@ const AuthPage = () => {
 
             {/* Phone Input */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Phone Number
+              </label>
               <div className="relative">
                 <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   type="tel"
                   value={registerData.phone}
-                  onChange={(e) => setRegisterData({ ...registerData, phone: e.target.value })}
+                  onChange={(e) =>
+                    setRegisterData({ ...registerData, phone: e.target.value })
+                  }
                   className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors ${
-                    errors.phone ? 'border-red-500' : 'border-gray-200'
+                    errors.phone ? "border-red-500" : "border-gray-200"
                   }`}
                   placeholder="Enter your phone number"
                 />
@@ -630,15 +682,22 @@ const AuthPage = () => {
 
             {/* Password Inputs */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Password
+              </label>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   value={registerData.password}
-                  onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
+                  onChange={(e) =>
+                    setRegisterData({
+                      ...registerData,
+                      password: e.target.value,
+                    })
+                  }
                   className={`w-full pl-12 pr-12 py-4 border-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors ${
-                    errors.password ? 'border-red-500' : 'border-gray-200'
+                    errors.password ? "border-red-500" : "border-gray-200"
                   }`}
                   placeholder="Create a password"
                 />
@@ -647,7 +706,11 @@ const AuthPage = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
                 </button>
               </div>
               {errors.password && (
@@ -659,15 +722,24 @@ const AuthPage = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Confirm Password
+              </label>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
-                  type={showConfirmPassword ? 'text' : 'password'}
+                  type={showConfirmPassword ? "text" : "password"}
                   value={registerData.confirmPassword}
-                  onChange={(e) => setRegisterData({ ...registerData, confirmPassword: e.target.value })}
+                  onChange={(e) =>
+                    setRegisterData({
+                      ...registerData,
+                      confirmPassword: e.target.value,
+                    })
+                  }
                   className={`w-full pl-12 pr-12 py-4 border-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors ${
-                    errors.confirmPassword ? 'border-red-500' : 'border-gray-200'
+                    errors.confirmPassword
+                      ? "border-red-500"
+                      : "border-gray-200"
                   }`}
                   placeholder="Confirm your password"
                 />
@@ -676,7 +748,11 @@ const AuthPage = () => {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
-                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showConfirmPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
                 </button>
               </div>
               {errors.confirmPassword && (
@@ -693,13 +769,23 @@ const AuthPage = () => {
                 <input
                   type="checkbox"
                   checked={registerData.agreeToTerms}
-                  onChange={(e) => setRegisterData({ ...registerData, agreeToTerms: e.target.checked })}
+                  onChange={(e) =>
+                    setRegisterData({
+                      ...registerData,
+                      agreeToTerms: e.target.checked,
+                    })
+                  }
                   className="w-5 h-5 text-purple-600 rounded border-gray-300 focus:ring-purple-500 mt-0.5"
                 />
                 <span className="text-sm text-gray-600">
-                  I agree to the{' '}
-                  <span className="text-purple-600 underline">Terms of Service</span> and{' '}
-                  <span className="text-purple-600 underline">Privacy Policy</span>
+                  I agree to the{" "}
+                  <span className="text-purple-600 underline">
+                    Terms of Service
+                  </span>{" "}
+                  and{" "}
+                  <span className="text-purple-600 underline">
+                    Privacy Policy
+                  </span>
                 </span>
               </label>
               {errors.agreeToTerms && (
@@ -713,7 +799,12 @@ const AuthPage = () => {
                 <input
                   type="checkbox"
                   checked={registerData.subscribeNewsletter}
-                  onChange={(e) => setRegisterData({ ...registerData, subscribeNewsletter: e.target.checked })}
+                  onChange={(e) =>
+                    setRegisterData({
+                      ...registerData,
+                      subscribeNewsletter: e.target.checked,
+                    })
+                  }
                   className="w-5 h-5 text-purple-600 rounded border-gray-300 focus:ring-purple-500 mt-0.5"
                 />
                 <span className="text-sm text-gray-600">
@@ -734,15 +825,15 @@ const AuthPage = () => {
                   Creating account...
                 </>
               ) : (
-                'Create Account'
+                "Create Account"
               )}
             </button>
 
             {/* Sign In Link */}
             <p className="text-center text-gray-600">
-              Already have an account?{' '}
+              Already have an account?{" "}
               <button
-                onClick={() => setCurrentView('login')}
+                onClick={() => setCurrentView("login")}
                 className="text-purple-600 font-medium hover:underline"
               >
                 Sign in
@@ -752,28 +843,33 @@ const AuthPage = () => {
         )}
 
         {/* Forgot Password Form */}
-        {currentView === 'forgot' && (
+        {currentView === "forgot" && (
           <div className="space-y-6">
             <div className="text-center mb-8">
               <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Lock className="w-8 h-8 text-purple-600" />
               </div>
               <p className="text-gray-600">
-                Don't worry! Enter your email address and we'll send you a code to reset your password.
+                Don't worry! Enter your email address and we'll send you a code
+                to reset your password.
               </p>
             </div>
 
             {/* Email Input */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Email Address
+              </label>
               <div className="relative">
                 <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   type="email"
                   value={forgotData.email}
-                  onChange={(e) => setForgotData({ ...forgotData, email: e.target.value })}
+                  onChange={(e) =>
+                    setForgotData({ ...forgotData, email: e.target.value })
+                  }
                   className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors ${
-                    errors.email ? 'border-red-500' : 'border-gray-200'
+                    errors.email ? "border-red-500" : "border-gray-200"
                   }`}
                   placeholder="Enter your email address"
                 />
@@ -798,13 +894,13 @@ const AuthPage = () => {
                   Sending code...
                 </>
               ) : (
-                'Send Reset Code'
+                "Send Reset Code"
               )}
             </button>
 
             {/* Back to Login */}
             <button
-              onClick={() => setCurrentView('login')}
+              onClick={() => setCurrentView("login")}
               className="w-full text-purple-600 font-medium hover:underline"
             >
               Back to Sign In
@@ -813,7 +909,7 @@ const AuthPage = () => {
         )}
 
         {/* OTP Verification */}
-        {currentView === 'otp' && (
+        {currentView === "otp" && (
           <div className="space-y-6">
             <div className="text-center mb-8">
               <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -822,7 +918,9 @@ const AuthPage = () => {
               <p className="text-gray-600 mb-2">
                 We've sent a 6-digit verification code to
               </p>
-              <p className="font-medium">{forgotData.email || registerData.email}</p>
+              <p className="font-medium">
+                {forgotData.email || registerData.email}
+              </p>
             </div>
 
             {/* OTP Input */}
@@ -855,7 +953,10 @@ const AuthPage = () => {
             <div className="text-center">
               {!canResendOtp ? (
                 <p className="text-gray-500">
-                  Resend code in <span className="font-medium text-purple-600">{otpTimer}s</span>
+                  Resend code in{" "}
+                  <span className="font-medium text-purple-600">
+                    {otpTimer}s
+                  </span>
                 </p>
               ) : (
                 <button
@@ -879,13 +980,15 @@ const AuthPage = () => {
                   Verifying...
                 </>
               ) : (
-                'Verify Code'
+                "Verify Code"
               )}
             </button>
 
             {/* Change Email */}
             <button
-              onClick={() => setCurrentView(forgotData.email ? 'forgot' : 'register')}
+              onClick={() =>
+                setCurrentView(forgotData.email ? "forgot" : "register")
+              }
               className="w-full text-gray-600 hover:text-purple-600 transition-colors"
             >
               Change email address
@@ -897,4 +1000,4 @@ const AuthPage = () => {
   );
 };
 
-export default AuthPage
+export default AuthPage;
